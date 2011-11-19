@@ -31,8 +31,8 @@ clean_workspace() {
   echo "*** The following files have been noticed in the workspace [$(pwd)]: ***"
   ls -la ./
 
-  echo "*** Cleaning workspace in $(pwd) to make sure we're building from scratch. ***"
-  rm -f ./* || true
+#  echo "*** Cleaning workspace in $(pwd) to make sure we're building from scratch. ***"
+#  rm -f ./* || true
 }
 
 # make sure we don't leave files for next run
