@@ -32,25 +32,10 @@ bailout() {
   [ -n "${1:-}" ] && EXIT="${1}" || EXIT=0
   [ -n "${2:-}" ] && echo "$2" >&2
 
+  echo "*** Cleaning up $BASE_DIR ***"
+  cd "${BASE_DIR}" && rm -f ./*
+
   exit $EXIT
-}
-
-get_base_directory() {
-  # FIXME
-  if [ -d "$WORKSPACE"/repos-data ] ; then
-    cd "$WORKSPACE"/repos-data/architecture=*,label=*/
-    BASE_DIR=$(pwd)
-  fi
-
-#  if [ -n "${workspace_binaries:-}" ] ; then
-#    cd $workspace_binaries
-#    cd ..
-#    archive=$(find configurations -name lastStable -type l | grep axis-label | head -1)/archive
-#    if [ -n "${archive:-}" ] ; then
-#      cd "$archive"
-#      BASE_DIR=$(pwd)
-#    fi
-#  fi
 }
 
 identify_package_name() {
@@ -221,10 +206,17 @@ deploy_to_releases() {
 trap bailout 1 2 3 3 6 9 14 15
 
 checks_and_defaults
-get_base_directory
-identify_package_name
-build_info
-identify_sourcefile
-deploy_to_releases
+
+cd "$WORKSPACE"
+if [ -d repos-data ] ; then
+ cd repos-data
+ for directory in architecture=*,label=* ; do
+   BASE_DIR="$(pwd)/${directory}"
+   identify_package_name
+   build_info
+   identify_sourcefile
+   deploy_to_releases
+ done
+fi
 
 bailout 0
